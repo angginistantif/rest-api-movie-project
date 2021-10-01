@@ -1,6 +1,7 @@
 package project.restapimovie.service;
 
 import java.util.List;
+
 import project.restapimovie.model.Movie;
 
 public interface MovieService {

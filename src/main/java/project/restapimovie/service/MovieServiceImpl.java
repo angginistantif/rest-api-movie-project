@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import project.restapimovie.model.Movie;
 import project.restapimovie.repository.MovieRepository;
-import project.restapimovie.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
