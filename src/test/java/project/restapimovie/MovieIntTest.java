@@ -1,5 +1,6 @@
-package project.restapimovie.controller;
+package project.restapimovie;
 
+import project.restapimovie.controller.MovieController;
 import project.restapimovie.model.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MovieControllerTest {
+public class MovieIntTest {
 
     private MockMvc mockMvc;
 
@@ -101,7 +102,7 @@ public class MovieControllerTest {
 
     @Test
     public void shouldSaveMember() throws Exception {
-        Movie record = new Movie("Squid Game", "2021", "Random", "8.1", "Lorem ipsum", "Gong yoo", "1234", "60 minute", "$75.47M");
+        Movie record = new Movie();
 
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -151,7 +152,7 @@ public class MovieControllerTest {
 
     @Test
     public void shouldUpdateMember() throws Exception {
-        Movie record = new Movie((long) 461, "Squid Gamee", "2021", "Random", "8.1", "Lorem ipsum", "Gong yoo", "1234", "60 minute", "$75.47M");
+        Movie record = new Movie();
 
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)

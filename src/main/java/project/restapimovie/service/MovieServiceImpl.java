@@ -1,10 +1,14 @@
 package project.restapimovie.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import project.restapimovie.model.Movie;
 import project.restapimovie.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 
 @Service
@@ -15,7 +19,12 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public Movie saveMovie(Movie movie) {
-		return movieRepository.save(movie);
+		try {
+			return movieRepository.save(movie);
+		} catch (Exception e){
+			return null;
+		}
+		
 	}
 
 	@Override
@@ -24,32 +33,39 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
-	public Movie getMovieById(long id) {
-        Movie movie = movieRepository.findById(id).get();
-        return movie;		
+	public Optional<Movie> getMovieById(long id) {
+		return movieRepository.findById(id);	
 	}
 
 	@Override
 	public Movie updateMovie (Movie movie, long id) {
-        Movie existingMovie = movieRepository.findById(id).get();
-		
-        existingMovie.setMovie(movie.getMovie());
-		existingMovie.setYear(movie.getYear());
-        existingMovie.setGenre(movie.getGenre());
-        existingMovie.setRating(movie.getRating());
-        existingMovie.setOneLine(movie.getOneLine());
-        existingMovie.setStars(movie.getStars());
-        existingMovie.setVotes(movie.getVotes());
-        existingMovie.setRuntime(movie.getRuntime());
-        existingMovie.setGross(movie.getGross());
-		movieRepository.save(existingMovie);
-		return existingMovie;
+		try {
+			Movie existingMovie = movieRepository.findById(id).get();
+			existingMovie.setMovie(movie.getMovie());
+			existingMovie.setYear(movie.getYear());
+			existingMovie.setGenre(movie.getGenre());
+			existingMovie.setRating(movie.getRating());
+			existingMovie.setOneLine(movie.getOneLine());
+			existingMovie.setStars(movie.getStars());
+			existingMovie.setVotes(movie.getVotes());
+			existingMovie.setRuntime(movie.getRuntime());
+			existingMovie.setGross(movie.getGross());
+			return movieRepository.save(existingMovie);
+		} catch (Exception e) {
+            return null;
+        }
+        
 	}
 
 	@Override
 	public void deleteMovie(long id) {
-        Movie movie = movieRepository.findById(id).get();
-        movieRepository.delete(movie);
+		try {
+			Movie movie = movieRepository.findById(id).get();
+        	movieRepository.delete(movie);
+		} catch (Exception e){
+			return;
+		}
+        
 	}
     
 }
