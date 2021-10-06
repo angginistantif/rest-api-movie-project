@@ -19,7 +19,7 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MovieServiceUnitTest {
+public class MovieUnitTest {
 
     @Autowired
     ObjectMapper mapper;
@@ -154,13 +154,6 @@ public class MovieServiceUnitTest {
         newMovieData.setVotes("100 Updated");
         movieService.updateMovie(newMovieData, 600);
     }
-
-
-
-
-
-
-
     
 }
 

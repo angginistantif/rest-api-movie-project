@@ -1,13 +1,7 @@
-# REST-API-MOVIE-PROJECT
+API Endpoint
 
-## Installation Guide
-
-
-## API Documentation
-
-### GET (http://localhost:8080/api/movies/)
-### GET (http://localhost:8080/api/movies/{id})
-### PUSH (http://localhost:8080/api/movies)
-### PUT (http://localhost:8080/api/movies)
-### DELETE (http://localhost:8080/api/movies/{id})
+An API Endpoint for Movie Data using Spring Boot Framework. 
     
+    [API Documentation](https://drive.google.com/file/d/1Y2tywXHk6Fd2dx9QSidh04qd0bBxS8zj/view?usp=sharing)
+
+
