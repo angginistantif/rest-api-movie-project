@@ -1,6 +1,5 @@
-package project.restapimovie;
+package project.restapimovie.controller;
 
-import project.restapimovie.controller.MovieController;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -24,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MovieIntTest {
+public class MovieIntegrationTest {
 
     private MockMvc mockMvc;
 
@@ -39,16 +38,16 @@ public class MovieIntTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
-    @Test
+    @Test /** get all Movie**/
     public void shouldFetchAllMovies() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$", hasSize(469)))
+                .andExpect(jsonPath("$", hasSize(461)))
                 .andReturn();
     }
 
-    @Test
+    @Test /** search movie by valid ID **/
     public void shouldFindMovieByValidID() throws Exception {
         String MovieID = "2";
         this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
@@ -79,7 +78,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** search movie by invalid ID **/
     public void shouldFindMovieInvalidMovieId() throws Exception {
         String MovieID = "0";
         this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
@@ -91,7 +90,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** search movie by invalid type ID (string) **/
     public void shouldFindMovieInvalidTypeID() throws Exception {
         String MovieID = "abc";
         this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
@@ -103,10 +102,10 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** added movie by valid data **/
     public void shouldSaveMovieValid() throws Exception {
         String movieData = "{\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Add\"}";
-        String movieID = "480";
+        String movieID = "463";
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(movieData)
@@ -115,7 +114,7 @@ public class MovieIntTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.id").value(movieID))
                 .andExpect(jsonPath("$.movie").exists())
-                .andExpect(jsonPath("$.movie").value("Squid Game"))
+                .andExpect(jsonPath("$.movie").value("Squid Game Integration Test Add"))
                 .andExpect(jsonPath("$.year").exists())
                 .andExpect(jsonPath("$.year").value("2021"))
                 .andExpect(jsonPath("$.genre").exists())
@@ -136,7 +135,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** added movie by empty data **/
     public void shouldVerifySaveMovieEmpty() throws Exception {
         String movieData = "";
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
@@ -150,7 +149,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** added movie by invalid key data **/
     public void shouldVerifySaveMovieInvalidData() throws Exception {
         String movieData = "{\"yearsss\":\"2021\",\"genressss\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Add\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
@@ -164,7 +163,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** update movie by valid data **/
     public void shouldUpdateMember() throws Exception {
         String movieData = "{\"id\":\"460\",\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
@@ -196,7 +195,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** update movie by invalid ID **/
     public void shouldUpdateMovieInvalidID()  throws Exception {
         String movieData = "{\"id\":\"600\",\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
@@ -210,7 +209,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** update movie by empty data **/
     public void shouldUpdateMovieEmptyData()  throws Exception {
         String movieData = "";
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
@@ -224,7 +223,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** update movie by invalid key data **/
     public void shouldUpdateMovieInvalidData()  throws Exception {
         String movieData = "{\"id\":\"460\",\"years\":\"2021\",\"genres\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
@@ -238,9 +237,9 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** delete movie by valid data **/
     public void shouldRemoveMovie() throws Exception {
-        String MovieID = "475";
+        String MovieID = "461";
         this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -250,7 +249,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** delete movie by invalid ID **/
     public void shouldVerifyInvalidMovieRemove() throws Exception {
         String MovieID = "0";
         this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)
@@ -262,7 +261,7 @@ public class MovieIntTest {
                 .andReturn();
     }
 
-    @Test
+    @Test /** delete movie by invalid type ID**/
     public void shouldVerifyInvalidTypeIDMovieRemove() throws Exception {
         String MovieID = "abc";
         this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)

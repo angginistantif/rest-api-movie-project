@@ -30,8 +30,7 @@ public class MovieController {
 		this.movieService = movieService;
 	}
 	
-	// build create employee REST API
-	@PostMapping(
+    @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Optional<Movie> saveEmployee(@RequestBody Movie movie) throws CustomException{
@@ -62,25 +61,31 @@ public class MovieController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public Optional<Movie> updateMember(@RequestBody @Validated Movie movie) throws CustomException {
-        Optional<Movie> updateData = movieService.updateMovie(movie, movie.getId());
-		if (updateData.isPresent()) {
-            return movieService.updateMovie(movie, movie.getId());
+		if (movieService.getMovieById(movie.getId()).isPresent()) {
+            Optional<Movie> updateData = movieService.updateMovie(movie, movie.getId());
+            if ( updateData.isPresent() ){
+                return updateData; 
+            } else {
+                throw new CustomException(HttpStatus.BAD_REQUEST.value(),"Your request has issued a malformed or illegal request.");                
+            }
+
         } else {
             throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + movie.getId() + "' not found.");
-        }
+        } 
     }
 
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomResponse> removeMember(@PathVariable("id") long id) throws CustomException {
 
-		try {
-			this.movieService.deleteMovie(id);
+        if (movieService.getMovieById(id).isPresent()) {
+            movieService.deleteMovie(id);
             return new ResponseEntity<>(
-                    new CustomResponse(HttpStatus.OK.value(),
-                            "Movie with ID: '" + id + "' deleted."), HttpStatus.OK);                                                                                                                                                                
-		} catch (NoSuchElementException e) {
+                new CustomResponse(HttpStatus.OK.value(),
+                        "Movie with ID: '" + id + "' deleted."), HttpStatus.OK);  
+        } else {
 			throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + id + "' not found.");
-		}
+        } 
+
     }
 
 	
