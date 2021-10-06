@@ -31,9 +31,16 @@ public class MovieController {
 	}
 	
 	// build create employee REST API
-	@PostMapping()
-	public ResponseEntity<Movie> saveEmployee(@RequestBody Movie movie){
-		return new ResponseEntity<Movie>(movieService.saveMovie(movie), HttpStatus.CREATED);
+	@PostMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Optional<Movie> saveEmployee(@RequestBody Movie movie) throws CustomException{
+        Optional<Movie> newData = movieService.saveMovie(movie);
+        if (newData.isPresent()){
+            return newData;
+        } else{
+            throw new CustomException( HttpStatus.BAD_REQUEST.value(),"Your request has issued a malformed or illegal request.");        
+        }	
 	}
 	
 	
@@ -44,26 +51,20 @@ public class MovieController {
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<Movie> findMemberById(@PathVariable("id") Long id) throws CustomException {
-		try {
-			return movieService.getMovieById(id);                                                                                                                                                                        
-		} catch (NoSuchElementException e) {
-			throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + id + "' not found.");
-		}
+        if ( movieService.getMovieById(id).isPresent()){
+            return movieService.getMovieById(id);
+        } else {
+            throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + id + "' not found.");
+        }
 	}
-
-    @PostMapping(
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Movie saveMember(@RequestBody @Validated Movie member) {
-        return movieService.saveMovie(member);
-    }
 
     @PutMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Movie updateMember(@RequestBody @Validated Movie movie) throws CustomException {
-		if (movieService.getMovieById(movie.getId()) != null) {
-            return movieService.saveMovie(movie);
+    public Optional<Movie> updateMember(@RequestBody @Validated Movie movie) throws CustomException {
+        Optional<Movie> updateData = movieService.updateMovie(movie, movie.getId());
+		if (updateData.isPresent()) {
+            return movieService.updateMovie(movie, movie.getId());
         } else {
             throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + movie.getId() + "' not found.");
         }
@@ -77,7 +78,7 @@ public class MovieController {
             return new ResponseEntity<>(
                     new CustomResponse(HttpStatus.OK.value(),
                             "Movie with ID: '" + id + "' deleted."), HttpStatus.OK);                                                                                                                                                                
-		} catch (Exception e) {
+		} catch (NoSuchElementException e) {
 			throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + id + "' not found.");
 		}
     }

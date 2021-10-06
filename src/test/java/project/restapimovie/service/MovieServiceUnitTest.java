@@ -5,26 +5,14 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -32,9 +20,6 @@ import java.util.Optional;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MovieServiceUnitTest {
-
-    @Autowired
-    private WebApplicationContext wac;
 
     @Autowired
     ObjectMapper mapper;
@@ -82,7 +67,7 @@ public class MovieServiceUnitTest {
         movie.setOneLine("Lorem ipsum dolor");
         movie.setStars("Lorem ipsum");
         movie.setVotes("100");
-        Movie newMovieData = movieService.saveMovie(movie);
+        Movie newMovieData = movieService.saveMovie(movie).get();
         assertEquals(newMovieData.getMovie(), movie.getMovie());
         assertEquals(newMovieData.getYear(), movie.getYear());
         assertEquals(newMovieData.getGenre(), movie.getGenre());
@@ -114,7 +99,7 @@ public class MovieServiceUnitTest {
         movie.setOneLine("Lorem ipsum dolor");
         movie.setStars("Lorem ipsum");
         movie.setVotes("100");
-        Movie newMovieData = movieService.saveMovie(movie);
+        Movie newMovieData = movieService.saveMovie(movie).get();
         assertEquals(newMovieData.getMovie(), movie.getMovie());
         movieService.deleteMovie(newMovieData.getId());
     }

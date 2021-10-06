@@ -1,9 +1,7 @@
 package project.restapimovie.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import project.restapimovie.model.Movie;
 import project.restapimovie.repository.MovieRepository;
@@ -18,10 +16,10 @@ public class MovieServiceImpl implements MovieService {
     private MovieRepository movieRepository;
 
 	@Override
-	public Movie saveMovie(Movie movie) {
+	public Optional<Movie> saveMovie(Movie movie) {
 		try {
-			return movieRepository.save(movie);
-		} catch (Exception e){
+			return Optional.of(movieRepository.save(movie));
+		} catch (DataIntegrityViolationException e){
 			return null;
 		}
 		
@@ -38,7 +36,7 @@ public class MovieServiceImpl implements MovieService {
 	}
 
 	@Override
-	public Movie updateMovie (Movie movie, long id) {
+	public Optional<Movie> updateMovie (Movie movie, long id) {
 		try {
 			Movie existingMovie = movieRepository.findById(id).get();
 			existingMovie.setMovie(movie.getMovie());
@@ -50,7 +48,7 @@ public class MovieServiceImpl implements MovieService {
 			existingMovie.setVotes(movie.getVotes());
 			existingMovie.setRuntime(movie.getRuntime());
 			existingMovie.setGross(movie.getGross());
-			return movieRepository.save(existingMovie);
+			return Optional.of(movieRepository.save(existingMovie));
 		} catch (Exception e) {
             return null;
         }
