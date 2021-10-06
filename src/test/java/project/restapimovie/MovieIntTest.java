@@ -1,7 +1,6 @@
 package project.restapimovie;
 
 import project.restapimovie.controller.MovieController;
-import project.restapimovie.model.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -41,19 +40,21 @@ public class MovieIntTest {
     }
 
     @Test
-    public void shouldFetchAllMembers() throws Exception {
+    public void shouldFetchAllMovies() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$", hasSize(460)))
+                .andExpect(jsonPath("$", hasSize(469)))
                 .andReturn();
     }
 
     @Test
-    public void shouldFindMemberById() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + "2")
+    public void shouldFindMovieByValidID() throws Exception {
+        String MovieID = "2";
+        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.movie").exists())
@@ -79,38 +80,40 @@ public class MovieIntTest {
     }
 
     @Test
-    public void shouldVerifyInvalidMemberId() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + "0")
+    public void shouldFindMovieInvalidMovieId() throws Exception {
+        String MovieID = "0";
+        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
-                        .value("Movie with ID: '0' not found."))
+                        .value("Movie with ID: '"+ MovieID +"' not found."))
                 .andReturn();
     }
 
     @Test
-    public void shouldVerifyInvalidMemberArgument() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + "abc")
+    public void shouldFindMovieInvalidTypeID() throws Exception {
+        String MovieID = "abc";
+        this.mockMvc.perform(MockMvcRequestBuilders.get(MovieController.URI + MovieID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Your request has issued a malformed or illegal request."))
+                .value("Your request has issued a malformed or illegal request."))
                 .andReturn();
     }
 
     @Test
-    public void shouldSaveMember() throws Exception {
-        Movie record = new Movie();
-
+    public void shouldSaveMovieValid() throws Exception {
+        String movieData = "{\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Add\"}";
+        String movieID = "480";
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(record))
+                .content(movieData)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.id").value(461))
+                .andExpect(jsonPath("$.id").value(movieID))
                 .andExpect(jsonPath("$.movie").exists())
                 .andExpect(jsonPath("$.movie").value("Squid Game"))
                 .andExpect(jsonPath("$.year").exists())
@@ -131,38 +134,48 @@ public class MovieIntTest {
                 .andExpect(jsonPath("$.gross").value("$75.47M"))
                 .andExpect(jsonPath("$.*", hasSize(10)))
                 .andReturn();
-
     }
 
     @Test
-    public void shouldVerifyInvalidSaveMember() throws Exception {
-        Movie record = new Movie();
-
+    public void shouldVerifySaveMovieEmpty() throws Exception {
+        String movieData = "";
         this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(record))
+                .content(movieData)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Your request has issued a malformed or illegal request."))
+                .value("Your request has issued a malformed or illegal request."))
                 .andReturn();
+    }
 
+    @Test
+    public void shouldVerifySaveMovieInvalidData() throws Exception {
+        String movieData = "{\"yearsss\":\"2021\",\"genressss\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Add\"}";
+        this.mockMvc.perform(MockMvcRequestBuilders.post(MovieController.URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(movieData)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                .value("Your request has issued a malformed or illegal request."))
+                .andReturn();
     }
 
     @Test
     public void shouldUpdateMember() throws Exception {
-        Movie record = new Movie();
-
+        String movieData = "{\"id\":\"460\",\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
         this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(record))
+                .content(movieData)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.id").value(461))
+                .andExpect(jsonPath("$.id").value(460))
                 .andExpect(jsonPath("$.movie").exists())
-                .andExpect(jsonPath("$.movie").value("Squid Gamee"))
+                .andExpect(jsonPath("$.movie").value("Squid Game Integration Test Update"))
                 .andExpect(jsonPath("$.year").exists())
                 .andExpect(jsonPath("$.year").value("2021"))
                 .andExpect(jsonPath("$.genre").exists())
@@ -184,25 +197,82 @@ public class MovieIntTest {
     }
 
     @Test
-    public void shouldRemoveMember() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + "1")
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message")
-                        .value("Movie with ID: '1' deleted."))
-                .andReturn();
-    }
-
-    @Test
-    public void shouldVerifyInvalidMemberRemove() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + "999")
+    public void shouldUpdateMovieInvalidID()  throws Exception {
+        String movieData = "{\"id\":\"600\",\"year\":\"2021\",\"genre\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
+        this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(movieData)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
-                        .value("Movie with ID: '999' not found."))
+                .value("Movie with ID: '"+ 600 +"' not found."))
                 .andReturn();
     }
+
+    @Test
+    public void shouldUpdateMovieEmptyData()  throws Exception {
+        String movieData = "";
+        this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(movieData)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                .value("Your request has issued a malformed or illegal request."))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldUpdateMovieInvalidData()  throws Exception {
+        String movieData = "{\"id\":\"460\",\"years\":\"2021\",\"genres\":\"Random\",\"rating\":\"8.1\",\"stars\":\"Gong yoo\",\"votes\":\"1234\",\"runtime\":\"60 minute\",\"gross\":\"$75.47M\",\"oneLine\":\"Lorem ipsum\",\"movie\":\"Squid Game Integration Test Update\"}";
+        this.mockMvc.perform(MockMvcRequestBuilders.put(MovieController.URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(movieData)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                .value("Your request has issued a malformed or illegal request."))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldRemoveMovie() throws Exception {
+        String MovieID = "475";
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message")
+                .value("Movie with ID: '"+ MovieID +"' deleted."))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldVerifyInvalidMovieRemove() throws Exception {
+        String MovieID = "0";
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message")
+                .value("Movie with ID: '"+ MovieID +"' deleted."))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldVerifyInvalidTypeIDMovieRemove() throws Exception {
+        String MovieID = "abc";
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(MovieController.URI + MovieID)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Your request has issued a malformed or illegal request."))
+                .andReturn();
+    }
+
 }
 
