@@ -12,31 +12,6 @@ public class Movie {
     public Movie(){
     }
     
-    public Movie (String movie, String year, String genre, String rating, String one_line, String stars, String votes, String runtime, String gross ){
-        this.movies = movie;
-        this.year = year;
-        this.genre = genre;
-        this.rating = rating;
-        this.one_line = one_line;
-        this.stars = stars;
-        this.votes = votes;
-        this.runtime = runtime;
-        this.gross = gross;
-    }
-
-    public Movie (Long id, String movie, String year, String genre, String rating, String one_line, String stars, String votes, String runtime, String gross ){
-        this.id = id;
-        this.movies = movie;
-        this.year = year;
-        this.genre = genre;
-        this.rating = rating;
-        this.one_line = one_line;
-        this.stars = stars;
-        this.votes = votes;
-        this.runtime = runtime;
-        this.gross = gross;
-    }
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

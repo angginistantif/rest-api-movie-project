@@ -21,7 +21,7 @@ import project.restapimovie.service.MovieService;
 @RequestMapping("/api/movies")
 public class MovieController {
 	
-    static String URI = "/api/movies/";
+    public static String URI = "/api/movies/";
     
     private MovieService movieService;
 
@@ -45,7 +45,7 @@ public class MovieController {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Optional<Movie> findMemberById(@PathVariable("id") Long id) throws CustomException {
 		try {
-			return Optional.of(movieService.getMovieById(id));                                                                                                                                                                        
+			return movieService.getMovieById(id);                                                                                                                                                                        
 		} catch (NoSuchElementException e) {
 			throw new CustomException(HttpStatus.NOT_FOUND.value(),"Movie with ID: '" + id + "' not found.");
 		}
